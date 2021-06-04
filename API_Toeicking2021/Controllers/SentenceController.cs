@@ -14,7 +14,10 @@ namespace API_Toeicking2021.Controllers
     // 1.此controller繼承ControllerBase類別
     public class SentenceController : ControllerBase
     {
-        public IActionResult Index()
+        // 對應到flutter的http.get()方法
+        // url：domain/Character/GetAll
+        [HttpGet("GetAll")]
+        public IActionResult Get()
         {
             return Ok();
         }
