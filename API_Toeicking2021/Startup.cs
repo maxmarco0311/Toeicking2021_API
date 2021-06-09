@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API_Toeicking2021.Data;
+using API_Toeicking2021.Services.SentenceDBService;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,6 +34,8 @@ namespace API_Toeicking2021
             services.AddControllers();
             // ª`¤J AUTOMAPPER
             services.AddAutoMapper(typeof(Startup));
+            // ª`¤JDB service
+            services.AddScoped<ISentenceDBService, SentenceDBService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

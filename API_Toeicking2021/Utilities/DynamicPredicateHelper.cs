@@ -23,7 +23,7 @@ namespace API_Toeicking2021.Utilities
             var InnerPredicate_Part = PredicateBuilder.New<Sentence>();
             // 篩選順序3：處理布林值的predicate
             var InnerPredicate_Booleans = PredicateBuilder.New<Sentence>();
-            // 1. 篩選編號
+            // 1. 篩選編號(API條件式要換成!FormData.SenNum.IsNullOrEmpty)
             if (FormData.SenNum != null)
             {
                 // 檢查OuterPredicate是否還沒加入條件

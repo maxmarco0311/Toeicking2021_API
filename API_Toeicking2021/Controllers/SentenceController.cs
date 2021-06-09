@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API_Toeicking2021.Models;
+using API_Toeicking2021.Services.SentenceDBService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Toeicking2021.Controllers
@@ -14,12 +16,21 @@ namespace API_Toeicking2021.Controllers
     // 1.此controller繼承ControllerBase類別
     public class SentenceController : ControllerBase
     {
-        // 對應到flutter的http.get()方法
-        // url：domain/Character/GetAll
-        [HttpGet("GetAll")]
-        public IActionResult Get()
+        private readonly ISentenceDBService _sentenceDBService;
+
+        public SentenceController(ISentenceDBService sentenceDBService)
         {
-            return Ok();
+            _sentenceDBService = sentenceDBService;
+        }
+        
+        // 對應到flutter的http.get()方法
+        // url：domain/Sentence/GetSentences
+        [HttpGet("GetSentences")]
+        // 參數要加[FromQuery]，否則會報錯
+        public async Task<IActionResult> Get([FromQuery] TableQueryFormData formData)
+        {
+            var response = await _sentenceDBService.GetSentences(formData);
+            return Ok(response);
         }
     }
 }
