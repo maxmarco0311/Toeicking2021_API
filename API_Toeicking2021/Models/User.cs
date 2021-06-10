@@ -10,7 +10,7 @@ namespace API_Toeicking2021.Models
         public int UserId { get; set; }
         public string Email { get; set; }
         public bool Valid { get; set; }
-        public string rating { get; set; }
+        public string Rating { get; set; }
 
     }
 }

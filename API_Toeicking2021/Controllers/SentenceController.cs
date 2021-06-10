@@ -22,15 +22,19 @@ namespace API_Toeicking2021.Controllers
         {
             _sentenceDBService = sentenceDBService;
         }
-        
-        // 對應到flutter的http.get()方法
-        // url：domain/Sentence/GetSentences
+
+        // 取得所篩選的句子(url：domain/Sentence/GetSentences)
+        // ***因為參數是複雜(自訂)型別，所以一定要加[FromQuery]，否則會報錯***
         [HttpGet("GetSentences")]
-        // 參數要加[FromQuery]，否則會報錯
         public async Task<IActionResult> Get([FromQuery] TableQueryFormData formData)
         {
             var response = await _sentenceDBService.GetSentences(formData);
             return Ok(response);
         }
+ 
+
+
+
+
     }
 }
