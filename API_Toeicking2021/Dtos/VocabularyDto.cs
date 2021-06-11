@@ -7,9 +7,11 @@ namespace API_Toeicking2021.Dtos
 {
     public class VocabularyDto
     {
+        public int SentenceId { get; set; }
         public int VocabularyId { get; set; }
         public string Voc { get; set; }
         public string Category { get; set; }
         public string Chinese { get; set; }
+
     }
 }

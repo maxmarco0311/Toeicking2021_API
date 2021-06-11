@@ -31,8 +31,14 @@ namespace API_Toeicking2021.Controllers
             var response = await _sentenceDBService.GetSentences(formData);
             return Ok(response);
         }
- 
 
+        // 依字彙編號取得句子(url：domain/Sentence/GetSentenceByVocabularyId)
+        [HttpGet("GetSentenceByVocabularyId")]
+        public async Task<IActionResult> GetSentenceByVocabularyId([FromQuery] AddWordListParameter parameter)
+        {
+            var response = await _sentenceDBService.GetSentenceBundleByVocabularyId(parameter);
+            return Ok(response);
+        }
 
 
 

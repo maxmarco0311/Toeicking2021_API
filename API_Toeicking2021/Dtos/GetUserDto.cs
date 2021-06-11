@@ -11,5 +11,6 @@ namespace API_Toeicking2021.Dtos
         public string Email { get; set; }
         public bool Valid { get; set; }
         public string rating { get; set; }
+        public List<int> WordList { get; set; }
     }
 }

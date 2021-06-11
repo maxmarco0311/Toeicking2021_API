@@ -1,6 +1,7 @@
 ﻿using API_Toeicking2021.Data;
 using API_Toeicking2021.Dtos;
 using API_Toeicking2021.Models;
+using API_Toeicking2021.Utilities;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace API_Toeicking2021.Services.UserDBService
 
         }
 
+        #region 獲得User資料
         public ServiceResponse<GetUserDto> GetUser(string email)
         {
             ServiceResponse<GetUserDto> serviceResponse = new ServiceResponse<GetUserDto>();
@@ -36,6 +38,7 @@ namespace API_Toeicking2021.Services.UserDBService
             }
             return serviceResponse;
         }
+        #endregion
 
         #region 新增User
         public async Task<ServiceResponse<User>> AddUser(AddUserDto newUser)
@@ -62,7 +65,7 @@ namespace API_Toeicking2021.Services.UserDBService
         }
         #endregion
 
-        #region 更新User
+        #region 更新User的Valid或Rating
         public async Task<ServiceResponse<User>> UpdateUser(UpdateUserDto updateUser)
         {
             ServiceResponse<User> serviceResponse = new ServiceResponse<User>();
@@ -87,6 +90,46 @@ namespace API_Toeicking2021.Services.UserDBService
             return serviceResponse;
         }
         #endregion
+
+        #region 加入WordList(按下字彙旁邊的愛心)
+        public async Task<ServiceResponse<User>> AddWordList(AddWordListParameter parameter)
+        {
+            ServiceResponse<User> serviceResponse = new ServiceResponse<User>();
+            // 先取得WordList欄位現有的值
+            User user = _context.Users.FirstOrDefault(u => u.Email == parameter.Email);
+            if (user!=null)
+            {
+                string wordList = user.WordList;
+                // 判斷是否為空
+                if (wordList != null)
+                {
+                    // 第一次add
+                    // 把","放在前面，取出時就不用TrimEnd()
+                    wordList += "," + parameter.VocabularyId;
+                }
+                else
+                {
+                    // 第二次以上add
+                    wordList = parameter.VocabularyId;
+                }
+                // 存新值進DB，並將該字彙置於WordList第一個
+                user.WordList = ChangeWordListOrder.MoveToTop(wordList, parameter.VocabularyId);
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                // 再取出更新後的User資料回傳
+                serviceResponse.Data = _context.Users.FirstOrDefault(u => u.Email == parameter.Email);
+            }
+            else
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "查無此使用者";
+            }
+            return serviceResponse;
+
+        }
+        #endregion
+
+
 
     }
 }

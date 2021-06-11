@@ -5,13 +5,10 @@ using System.Threading.Tasks;
 
 namespace API_Toeicking2021.Models
 {
-    public class User
+    // AddWordList和GetSentenceBundleByVocabularyId所需的參數
+    public class AddWordListParameter
     {
-        public int UserId { get; set; }
         public string Email { get; set; }
-        public bool Valid { get; set; }
-        public string Rating { get; set; }
-        public string WordList { get; set; }
-
+        public string VocabularyId { get; set; }
     }
 }

@@ -22,6 +22,7 @@ namespace API_Toeicking2021.Services.SentenceDBService
             _mapper = mapper;
 
         }
+
         #region 查出(依條件篩選的)所有句子
         public async Task<ServiceResponse<List<SentenceBundleDto>>> GetSentences(TableQueryFormData FormData)
         {
@@ -46,30 +47,8 @@ namespace API_Toeicking2021.Services.SentenceDBService
                 // 將所有的sentence跑迴圈，每跑一次就要完成一個SentenceBundleDto物件
                 foreach (var item in sentences)
                 {
-                    // 宣告一個空的SentenceBundleDto物件
-                    SentenceBundleDto bundle = new SentenceBundleDto();
-                    // 將Sentence物件轉成SentenceDto物件，並放進SentenceBundleDto物件
-                    bundle.Sentence = _mapper.Map<SentenceDto>(item);
-                    // 將每個Vocabulary物件轉成VocabularyDto物件
-                    // ***Select()是將選到的物件做加工處理後回傳，這裡的加工就是將Vocabulary物件轉成VocabularyDto物件***
-                    List<VocabularyDto> vocabularies = await _context.Vocabularies.Where(v => v.SentenceId == item.SentenceId)
-                        .Select(v => _mapper.Map<VocabularyDto>(v)).ToListAsync();
-                    // 將List<VocabularyDto> 放進該SentenceBundleDto物件
-                    bundle.Vocabularies = vocabularies;
-                    // 將每個GA物件轉成GADto物件
-                    List<GADto> grammars = await _context.GAs.Where(g => g.SentenceId == item.SentenceId)
-                        .Select(g => _mapper.Map<GADto>(g)).ToListAsync();
-                    // 將List<GADto>放進該SentenceBundleDto物件
-                    bundle.GAs = grammars;
-                    // 將每個VA物件轉成VADto物件
-                    List<VADto> vocAnalyses = await _context.VAs.Where(va => va.SentenceId == item.SentenceId)
-                        .Select(va => _mapper.Map<VADto>(va)).ToListAsync();
-                    // 將List<VADto>放進該SentenceBundleDto物件
-                    bundle.VAs = vocAnalyses;
-                    // 音檔url
-                    bundle.NormalAudioUrls = GenerateAudioUrl.AudioUrls("1.0", item.SentenceId.ToString());
-                    bundle.FastAudioUrls = GenerateAudioUrl.AudioUrls("1.25", item.SentenceId.ToString());
-                    bundle.SlowAudioUrls = GenerateAudioUrl.AudioUrls("0.75", item.SentenceId.ToString());
+                    // 呼叫GenerateSentenceBundleBySentence，生出SentenceBundleDto物件
+                    SentenceBundleDto bundle = await GenerateSentenceBundleBySentence(item);
                     // 將該SentenceBundleDto物件放進List<SentenceBundleDto>
                     data.Add(bundle);
                 }
@@ -85,8 +64,77 @@ namespace API_Toeicking2021.Services.SentenceDBService
         }
         #endregion
 
+        #region 依字彙編號取得句子(點按字彙列表某字彙後顯示該字彙全部相關內容)
+        public async Task<ServiceResponse<SentenceBundleDto>> GetSentenceBundleByVocabularyId(AddWordListParameter parameter)
+        {
+            // 將參數轉型成int的vocabularyId
+            int vocabularyId = Convert.ToInt32(parameter.VocabularyId);
+            // 先宣告回傳serviceResponse
+            ServiceResponse<SentenceBundleDto> serviceResponse = new ServiceResponse<SentenceBundleDto>();
+            try
+            {
+                // 利用vocabularyId取得Sentence物件：
+                Sentence sentence = await _context.Vocabularies
+                                .Where(v => v.VocabularyId == vocabularyId)
+                                // 1. 利用Select()方法將Vocabulary物件轉成Sentence物件
+                                .Select(v => new Sentence
+                                {
+                                    // 2. Vocabulary物件中有導覽屬性Sentence，所以可獲得與其關聯的Sentence物件資料
+                                    SentenceId = v.Sentence.SentenceId,
+                                    Sen = v.Sentence.Sen,
+                                    Chinesese = v.Sentence.Chinesese
+                                })
+                                // 3. Select()之後物件型別是IQueryable<Sentence>，要利用FirstOrDefaultAsync()才能轉為Sentence型別
+                                .FirstOrDefaultAsync();
+                // 呼叫GenerateSentenceBundleBySentence，生出SentenceBundleDto物件
+                SentenceBundleDto bundle = await GenerateSentenceBundleBySentence(sentence);
+                serviceResponse.Data = bundle;
+                // 將該字彙置於WordList的第一個
+                User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == parameter.Email);
+                user.WordList = ChangeWordListOrder.MoveToTop(user.WordList, parameter.VocabularyId);
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+        #endregion
 
+        #region 類別內工具方法：用Sentence物件生出SentenceBundleDto物件
+        public async Task<SentenceBundleDto> GenerateSentenceBundleBySentence(Sentence sentence)
+        {
+            // 宣告一個空的SentenceBundleDto物件
+            SentenceBundleDto bundle = new SentenceBundleDto();
+            // 將Sentence物件轉成SentenceDto物件，並放進SentenceBundleDto物件
+            bundle.Sentence = _mapper.Map<SentenceDto>(sentence);
+            // 將每個Vocabulary物件轉成VocabularyDto物件
+            // ***Select()是將選到的物件做加工處理後回傳，這裡的加工就是將Vocabulary物件轉成VocabularyDto物件***
+            List<VocabularyDto> vocabularies = await _context.Vocabularies.Where(v => v.SentenceId == sentence.SentenceId)
+                .Select(v => _mapper.Map<VocabularyDto>(v)).ToListAsync();
+            // 將List<VocabularyDto> 放進該SentenceBundleDto物件
+            bundle.Vocabularies = vocabularies;
+            // 將每個GA物件轉成GADto物件
+            List<GADto> grammars = await _context.GAs.Where(g => g.SentenceId == sentence.SentenceId)
+                .Select(g => _mapper.Map<GADto>(g)).ToListAsync();
+            // 將List<GADto>放進該SentenceBundleDto物件
+            bundle.GAs = grammars;
+            // 將每個VA物件轉成VADto物件
+            List<VADto> vocAnalyses = await _context.VAs.Where(va => va.SentenceId == sentence.SentenceId)
+                .Select(va => _mapper.Map<VADto>(va)).ToListAsync();
+            // 將List<VADto>放進該SentenceBundleDto物件
+            bundle.VAs = vocAnalyses;
+            // 音檔url
+            bundle.NormalAudioUrls = GenerateAudioUrl.AudioUrls("1.0", sentence.SentenceId.ToString());
+            bundle.FastAudioUrls = GenerateAudioUrl.AudioUrls("1.25", sentence.SentenceId.ToString());
+            bundle.SlowAudioUrls = GenerateAudioUrl.AudioUrls("0.75", sentence.SentenceId.ToString());
+            return bundle;
 
+        }
+        #endregion
 
     }
 }

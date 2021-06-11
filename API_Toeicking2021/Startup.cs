@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API_Toeicking2021.Data;
 using API_Toeicking2021.Services.SentenceDBService;
 using API_Toeicking2021.Services.UserDBService;
+using API_Toeicking2021.Services.VocabularyDBService;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,6 +39,7 @@ namespace API_Toeicking2021
             // ª`¤JDB service
             services.AddScoped<ISentenceDBService, SentenceDBService>();
             services.AddScoped<IUserDBService, UserDBService>();
+            services.AddScoped<IVocabularyDBService, VocabularyDBService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

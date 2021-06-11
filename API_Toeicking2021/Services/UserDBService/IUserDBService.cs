@@ -12,5 +12,6 @@ namespace API_Toeicking2021.Services.UserDBService
         ServiceResponse<GetUserDto> GetUser(string email);
         Task<ServiceResponse<User>> AddUser(AddUserDto newUser);
         Task<ServiceResponse<User>> UpdateUser(UpdateUserDto updateUser);
+        Task<ServiceResponse<User>> AddWordList(AddWordListParameter parameter);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API_Toeicking2021.Dtos;
+using API_Toeicking2021.Models;
 using API_Toeicking2021.Services.UserDBService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +49,16 @@ namespace API_Toeicking2021.Controllers
             var response = await _UserDBService.UpdateUser(updateUser);
             return Ok(response);
         }
+
+        // 更新某位使用者資料(url：domain/User/AddWordList)
+        // POST時即便是複雜(自訂)型別，也可以不用加[FromBody]
+        [HttpPost("AddWordList")]
+        public async Task<IActionResult> AddWordList(AddWordListParameter parameter)
+        {
+            var response = await _UserDBService.AddWordList(parameter);
+            return Ok(response);
+        }
+
 
     }
 }
