@@ -24,7 +24,7 @@ namespace API_Toeicking2021.Controllers
         }
 
         // 取得所篩選的句子(url：domain/Sentence/GetSentences)
-        // ***因為參數是複雜(自訂)型別，所以一定要加[FromQuery]，否則會報錯***
+        // ***GET參數是複雜(自訂)型別，所以一定要加[FromQuery]，否則會報錯***
         [HttpGet("GetSentences")]
         public async Task<IActionResult> Get([FromQuery] TableQueryFormData formData)
         {

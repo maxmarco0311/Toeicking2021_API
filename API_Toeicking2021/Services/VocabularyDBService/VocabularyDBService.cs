@@ -25,24 +25,30 @@ namespace API_Toeicking2021.Services.VocabularyDBService
         public async Task<ServiceResponse<List<VocabularyDto>>> GetVocabularies(GetWordListParameter parameter)
         {
             ServiceResponse<List<VocabularyDto>> serviceResponse = new ServiceResponse<List<VocabularyDto>>();
+            // 宣告要送出的那頁字彙列表(List<VocabularyDto>)
             List<VocabularyDto> myWordList = new List<VocabularyDto>();
-            // 先每頁5筆
+            // 每頁5筆(正式上線改20筆)
             int pageSize = 5;
             try
             {
                 // 從DB中獲得WordList
                 User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == parameter.Email);
-                // 字串轉成List<int>
-                List<int> wordList = user.WordList.Split(',').Select(int.Parse).ToList();
-                // 使用LINQ取得每頁的List<int>
-                List<int> pageWordList = wordList.Skip((parameter.PageToLoad-1)*pageSize).Take(pageSize).ToList();
-                foreach (var item in pageWordList)
+                if (user != null)
                 {
-                    // FindAsync()的參數為int
-                    Vocabulary myWord = await _context.Vocabularies.FindAsync(item);
-                    myWordList.Add(_mapper.Map<VocabularyDto>(myWord));
+                    // 字串轉成List<int>
+                    List<int> wordList = user.WordList.Split(',').Select(int.Parse).ToList();
+                    // 使用LINQ取得每頁的List<int>
+                    List<int> pageWordList = wordList.Skip((parameter.PageToLoad - 1) * pageSize).Take(pageSize).ToList();
+                    // 將每頁的vocabularyId跑迴圈查出每筆Vocabulary物件，並傳成VocabularyDto物件
+                    foreach (var item in pageWordList)
+                    {
+                        // FindAsync()的參數為int
+                        Vocabulary myWord = await _context.Vocabularies.FindAsync(item);
+                        myWordList.Add(_mapper.Map<VocabularyDto>(myWord));
+                    }
+                    serviceResponse.Data = myWordList;
                 }
-                serviceResponse.Data = myWordList;
+                
             }
             catch (Exception ex)
             {
