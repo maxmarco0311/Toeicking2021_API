@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API_Toeicking2021.Models;
 using API_Toeicking2021.Services.SentenceDBService;
+using API_Toeicking2021.Services.UserDBService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Toeicking2021.Controllers
@@ -17,18 +18,20 @@ namespace API_Toeicking2021.Controllers
     public class SentenceController : ControllerBase
     {
         private readonly ISentenceDBService _sentenceDBService;
+        private readonly IUserDBService _UserDBService;
 
-        public SentenceController(ISentenceDBService sentenceDBService)
+        public SentenceController(ISentenceDBService sentenceDBService, IUserDBService UserDBService)
         {
             _sentenceDBService = sentenceDBService;
+            _UserDBService = UserDBService;
         }
 
         // 取得所篩選的句子(url：domain/Sentence/GetSentences)
         // ***GET參數是複雜(自訂)型別，所以一定要加[FromQuery]，否則會報錯***
         [HttpGet("GetSentences")]
-        public async Task<IActionResult> Get([FromQuery] TableQueryFormData formData)
+        public async Task<IActionResult> Get([FromQuery] GetSentencesParameter parameter)
         {
-            var response = await _sentenceDBService.GetSentences(formData);
+            var response = await _sentenceDBService.GetSentences(parameter.FormData);
             return Ok(response);
         }
 

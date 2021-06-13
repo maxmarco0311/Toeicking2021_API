@@ -3,6 +3,7 @@ using API_Toeicking2021.Dtos;
 using API_Toeicking2021.Models;
 using API_Toeicking2021.Utilities;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -136,6 +137,13 @@ namespace API_Toeicking2021.Services.UserDBService
             }
             return serviceResponse;
 
+        }
+        #endregion
+
+        #region 檢查使用者權限是否為valid(所有API執行前的第一步檢查)
+        public async Task<bool> IsValid(string email)
+        {
+            return await _context.Users.Where(u => u.Email == email).Select(u => u.Valid).FirstOrDefaultAsync();
         }
         #endregion
 
