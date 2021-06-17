@@ -32,13 +32,17 @@ namespace API_Toeicking2021.Services.SentenceDBService
             {
                 // 將要查詢資料表物件AsQueryable()
                 var source = _context.Sentences.AsQueryable();
-                // 將篩選資料處理成動態where條件式
-                var predicate = DynamicPredicateHelper.SentenceDynamicPredicate(FormData);
-                // predicate不為null代表有進行where條件篩選，反之沒有做任何篩選
-                if (predicate != null)
+                // 要檢查FormData參數，FormData若為空(沒有做任何篩選)，進入DynamicPredicateHelper會報例外錯誤
+                if (FormData!=null)
                 {
-                    // 使用Where(predicate)篩選IQueryable<T>物件，送到分頁的方法裡查出那一頁的資料
-                    source = source.Where(predicate);
+                    // 將篩選資料處理成動態where條件式
+                    var predicate = DynamicPredicateHelper.SentenceDynamicPredicate(FormData);
+                    // predicate不為null代表有進行where條件篩選，反之沒有做任何篩選
+                    if (predicate != null)
+                    {
+                        // 使用Where(predicate)篩選IQueryable<T>物件，送到分頁的方法裡查出那一頁的資料
+                        source = source.Where(predicate);
+                    }
                 }
                 // 取得所有的sentence
                 List<Sentence> sentences = await source.ToListAsync();

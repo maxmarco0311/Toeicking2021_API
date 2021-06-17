@@ -8,7 +8,8 @@ namespace API_Toeicking2021.Utilities
     public class GenerateAudioUrl
     {
         // 必須是靜態屬性，才可以被類別方法存取
-        public static string BaseUrl { get; set; } = "https://voice.toeicking.com/wwwroot/voice/";
+        // API呼叫時，路徑wwwroot記得要拿掉
+        public static string BaseUrl { get; set; } = "https://voice.toeicking.com/voice/";
         public static Dictionary<string, string> AudioUrls(string rate, string sentenceId)
         {
 
