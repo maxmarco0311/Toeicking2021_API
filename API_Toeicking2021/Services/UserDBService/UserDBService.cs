@@ -98,37 +98,39 @@ namespace API_Toeicking2021.Services.UserDBService
         {
             ServiceResponse<User> serviceResponse = new ServiceResponse<User>();
             User user = _context.Users.FirstOrDefault(u => u.Email == parameter.Email);
-            if (user!=null)
+            if (user != null)
             {
-                // 將欄位值字串(user.WordList)轉成List<string>
-                List<string> myWordList = WordListOrderHelper.ConvertToListFromString(user.WordList);
-                // 檢查是否已有加過這個字彙
-                if (!myWordList.Contains(parameter.VocabularyId))
-                {
-                    // 判斷是否為空
-                    if (user.WordList != null)
+                // 判斷user.WordList是否"不"為空
+                // 不為空代表之前有加入字彙過
+                if (!string.IsNullOrEmpty(user.WordList))
+                {                    
+                    // 將欄位值字串(user.WordList)轉成List<string>
+                    List<string> myWordList = WordListOrderHelper.ConvertToListFromString(user.WordList);
+                    // 再檢查是否已加過該字彙
+                    if (!myWordList.Contains(parameter.VocabularyId))
                     {
                         // 第二次以上add：把","放在前面，取出時就不用TrimEnd()
                         user.WordList += "," + parameter.VocabularyId;
                     }
                     else
                     {
-                        // 第一次add：直接加入VocabularyId
-                        user.WordList = parameter.VocabularyId;
-                    }
-                    // 存新值進DB，並將該字彙置於WordList第一個
-                    user.WordList = WordListOrderHelper.MoveToTop(user.WordList, parameter.VocabularyId);
-                    _context.Users.Update(user);
-                    await _context.SaveChangesAsync();
-                    // 再取出更新後的User資料回傳
-                    serviceResponse.Data = _context.Users.FirstOrDefault(u => u.Email == parameter.Email);
+                        serviceResponse.Success = false;
+                        serviceResponse.Message = "此字彙已加入過";
+                    }          
                 }
+                // 為空代表還沒加過字彙
                 else
                 {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "此字彙已加入過";
+                    // 第一次add：直接加入VocabularyId
+                    user.WordList = parameter.VocabularyId;
                 }
-                
+                // 存新值進DB，並將該字彙置於WordList第一個
+                user.WordList = WordListOrderHelper.MoveToTop(user.WordList, parameter.VocabularyId);
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                // 再取出更新後的User資料回傳
+                serviceResponse.Data = _context.Users.FirstOrDefault(u => u.Email == parameter.Email);
+
             }
             else
             {

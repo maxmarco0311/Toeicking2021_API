@@ -31,6 +31,7 @@ namespace API_Toeicking2021.Controllers
         [HttpGet("GetSentences")]
         public async Task<IActionResult> Get([FromQuery] GetSentencesParameter parameter)
         {
+            // parameter中的Email是用來做檢查進行api請求時user是否valid
             var response = await _sentenceDBService.GetSentences(parameter.FormData);
             return Ok(response);
         }
