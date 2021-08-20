@@ -30,6 +30,7 @@ namespace API_Toeicking2021.Services.UserDBService
             User user = _context.Users.FirstOrDefault(u => u.Email == email);
             if (user != null)
             {
+                // 是轉成GetUserDto型別的User，WordList型別是List<int>
                 serviceResponse.Data = _mapper.Map<GetUserDto>(user);
             }
             else
@@ -145,7 +146,16 @@ namespace API_Toeicking2021.Services.UserDBService
         #region 檢查使用者權限是否為valid(所有API執行前的第一步檢查)
         public async Task<bool> IsValid(string email)
         {
+            // 在Select()後要呼叫FirstOrDefaultAsync()回傳純值或單一物件，呼叫ToList()則回傳集合
             return await _context.Users.Where(u => u.Email == email).Select(u => u.Valid).FirstOrDefaultAsync();
+        }
+        #endregion
+
+        #region 檢查eamil是否存在(APP忘記密碼)
+        public async Task<bool> IsEmailExist(string email)
+        {
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return user != null ? true : false;
         }
         #endregion
 

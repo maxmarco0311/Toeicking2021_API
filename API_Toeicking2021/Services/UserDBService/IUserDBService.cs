@@ -14,5 +14,7 @@ namespace API_Toeicking2021.Services.UserDBService
         Task<ServiceResponse<User>> UpdateUser(UpdateUserDto updateUser);
         Task<ServiceResponse<User>> AddWordList(AddWordListParameter parameter);
         Task<bool> IsValid(string email);
+        Task<bool> IsEmailExist(string email);
+
     }
 }

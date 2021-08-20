@@ -58,7 +58,14 @@ namespace API_Toeicking2021.Controllers
             var response = await _UserDBService.AddWordList(parameter);
             return Ok(response);
         }
-
+        // 更新某位使用者資料(url：domain/User/AddWordList)
+        // ***POST時即便參數是一個純值，也要用物件包起來，不然收不到***
+        [HttpPost("IsEmailExist")]
+        public async Task<IActionResult> IsEmailExist(CheckEmail parameter)
+        {
+            var response = await _UserDBService.IsEmailExist(parameter.Email);
+            return Ok(response);
+        }
 
     }
 }
