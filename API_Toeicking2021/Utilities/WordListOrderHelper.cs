@@ -22,9 +22,13 @@ namespace API_Toeicking2021.Utilities
             return newWordList;
         }
 
-        public static List<string> ConvertToListFromString(string originalWordList)
+        public static List<string> ConvertToListFromString(string originalString)
         {
-            return originalWordList.Split(',').ToList();
+            return originalString.Split(',').ToList();
+        }
+        public static string ConvertToStringFromList(List<string> originalList) 
+        {
+            return string.Join(',', originalList);
         }
 
     }

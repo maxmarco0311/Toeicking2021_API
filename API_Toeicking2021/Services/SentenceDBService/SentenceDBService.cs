@@ -69,7 +69,7 @@ namespace API_Toeicking2021.Services.SentenceDBService
         #endregion
 
         #region 依字彙編號取得句子(點按字彙列表某字彙後顯示該字彙全部相關內容)
-        public async Task<ServiceResponse<SentenceBundleDto>> GetSentenceBundleByVocabularyId(AddWordListParameter parameter)
+        public async Task<ServiceResponse<SentenceBundleDto>> GetSentenceBundleByVocabularyId(WordListParameter parameter)
         {
             // 將參數轉型成int的vocabularyId
             int vocabularyId = Convert.ToInt32(parameter.VocabularyId);

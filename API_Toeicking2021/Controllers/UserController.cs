@@ -50,15 +50,25 @@ namespace API_Toeicking2021.Controllers
             return Ok(response);
         }
 
-        // 更新某位使用者資料(url：domain/User/AddWordList)
+        // 加入字彙清單(url：domain/User/AddWordList)
         // POST時即便是複雜(自訂)型別，也可以不用加[FromBody]
         [HttpPost("AddWordList")]
-        public async Task<IActionResult> AddWordList(AddWordListParameter parameter)
+        public async Task<IActionResult> AddWordList(WordListParameter parameter)
         {
             var response = await _UserDBService.AddWordList(parameter);
             return Ok(response);
         }
-        // 更新某位使用者資料(url：domain/User/AddWordList)
+
+        // 從字彙清單中刪除(url：domain/User/DeleteWordList)
+        // POST時即便是複雜(自訂)型別，也可以不用加[FromBody]
+        [HttpPost("DeleteWordList")]
+        public async Task<IActionResult> DeleteWordList(WordListParameter parameter)
+        {
+            var response = await _UserDBService.DeleteWordList(parameter);
+            return Ok(response);
+        }
+
+        // 檢查Email是否存在(url：domain/User/IsEmailExist)
         // ***POST時即便參數是一個純值，也要用物件包起來，不然收不到***
         [HttpPost("IsEmailExist")]
         public async Task<IActionResult> IsEmailExist(CheckEmail parameter)

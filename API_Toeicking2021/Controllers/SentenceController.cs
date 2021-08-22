@@ -38,7 +38,7 @@ namespace API_Toeicking2021.Controllers
 
         // 依字彙編號取得句子(url：domain/Sentence/GetSentenceByVocabularyId)
         [HttpGet("GetSentenceByVocabularyId")]
-        public async Task<IActionResult> GetSentenceByVocabularyId([FromQuery] AddWordListParameter parameter)
+        public async Task<IActionResult> GetSentenceByVocabularyId([FromQuery] WordListParameter parameter)
         {
             var response = await _sentenceDBService.GetSentenceBundleByVocabularyId(parameter);
             return Ok(response);
