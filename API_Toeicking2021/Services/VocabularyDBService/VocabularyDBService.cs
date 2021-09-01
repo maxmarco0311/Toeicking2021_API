@@ -28,7 +28,7 @@ namespace API_Toeicking2021.Services.VocabularyDBService
             // 宣告要送出的那頁字彙列表(List<VocabularyDto>)
             List<VocabularyDto> myWordList = new List<VocabularyDto>();
             // 每頁5筆(正式上線改20筆)
-            int pageSize = 5;
+            //int pageSize = 5;
             try
             {
                 // 從DB中獲得WordList
@@ -38,7 +38,8 @@ namespace API_Toeicking2021.Services.VocabularyDBService
                     // 字串轉成List<int>
                     List<int> wordList = user.WordList.Split(',').Select(int.Parse).ToList();
                     // 使用LINQ取得每頁的List<int>
-                    List<int> pageWordList = wordList.Skip((parameter.PageToLoad - 1) * pageSize).Take(pageSize).ToList();
+                    // 每頁撈幾筆(parameter.PageSize)由Flutter端利用API參數決定
+                    List<int> pageWordList = wordList.Skip((parameter.PageToLoad - 1) * parameter.PageSize).Take(parameter.PageSize).ToList();
                     // 將每頁的vocabularyId跑迴圈查出每筆Vocabulary物件，並傳成VocabularyDto物件
                     foreach (var item in pageWordList)
                     {

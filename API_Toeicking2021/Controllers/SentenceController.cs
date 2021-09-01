@@ -43,7 +43,13 @@ namespace API_Toeicking2021.Controllers
             var response = await _sentenceDBService.GetSentenceBundleByVocabularyId(parameter);
             return Ok(response);
         }
-
+        // 依句子編號取得句子(url：domain/Sentence/GetSentenceBySentenceId)
+        [HttpGet("GetSentenceBySentenceId")]
+        public async Task<IActionResult> GetSentenceBySentenceId([FromQuery] GetSingleSentenceParameter parameter)
+        {
+            var response = await _sentenceDBService.GetSentenceBundleBySentenceId(parameter);
+            return Ok(response);
+        }
 
 
     }

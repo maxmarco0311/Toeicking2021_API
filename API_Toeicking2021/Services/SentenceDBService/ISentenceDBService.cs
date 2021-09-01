@@ -11,5 +11,6 @@ namespace API_Toeicking2021.Services.SentenceDBService
     {
         Task<ServiceResponse<List<SentenceBundleDto>>> GetSentences(TableQueryFormData FormData);
         Task<ServiceResponse<SentenceBundleDto>> GetSentenceBundleByVocabularyId(WordListParameter parameter);
+        Task<ServiceResponse<SentenceBundleDto>> GetSentenceBundleBySentenceId(GetSingleSentenceParameter parameter);
     }
 }

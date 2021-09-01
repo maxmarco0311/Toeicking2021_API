@@ -68,7 +68,7 @@ namespace API_Toeicking2021.Services.SentenceDBService
         }
         #endregion
 
-        #region 依字彙編號取得句子(點按字彙列表某字彙後顯示該字彙全部相關內容)
+        #region 依字彙編號取得句子bundle(點按字彙列表某字彙後顯示該字彙全部相關內容)
         public async Task<ServiceResponse<SentenceBundleDto>> GetSentenceBundleByVocabularyId(WordListParameter parameter)
         {
             // 將參數轉型成int的vocabularyId
@@ -112,6 +112,27 @@ namespace API_Toeicking2021.Services.SentenceDBService
         }
         #endregion
 
+        #region 依句子編號取得句子bundle(點按字彙列表某字彙後顯示該字彙全部相關內容)
+        public async Task<ServiceResponse<SentenceBundleDto>> GetSentenceBundleBySentenceId(GetSingleSentenceParameter parameter)
+        {
+            // 先宣告回傳serviceResponse
+            ServiceResponse<SentenceBundleDto> serviceResponse = new ServiceResponse<SentenceBundleDto>();
+            try
+            {
+                Sentence sentence = await _context.Sentences.FindAsync(parameter.SentenceId);
+                // 呼叫GenerateSentenceBundleBySentence，生出SentenceBundleDto物件
+                SentenceBundleDto bundle = await GenerateSentenceBundleBySentence(sentence);
+                serviceResponse.Data = bundle;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+        #endregion
+
         #region 類別內工具方法：用Sentence物件生出SentenceBundleDto物件
         public async Task<SentenceBundleDto> GenerateSentenceBundleBySentence(Sentence sentence)
         {
@@ -120,7 +141,7 @@ namespace API_Toeicking2021.Services.SentenceDBService
             // 將Sentence物件轉成SentenceDto物件，並放進SentenceBundleDto物件
             bundle.Sentence = _mapper.Map<SentenceDto>(sentence);
             // 將每個Vocabulary物件轉成VocabularyDto物件
-            // ***Select()是將選到的物件(或集合迴圈)做加工處理後回傳，這裡的加工就是將Vocabulary物件轉成VocabularyDto物件***
+            // ***Select()是將選到的物件(或集合)迴圈做加工處理後回傳，這裡的加工就是將Vocabulary物件轉成VocabularyDto物件***
             List<VocabularyDto> vocabularies = await _context.Vocabularies.Where(v => v.SentenceId == sentence.SentenceId)
                 .Select(v => _mapper.Map<VocabularyDto>(v)).ToListAsync();
             // 將List<VocabularyDto> 放進該SentenceBundleDto物件
