@@ -10,5 +10,6 @@ namespace API_Toeicking2021.Services.VocabularyDBService
     public interface IVocabularyDBService
     {
         Task<ServiceResponse<List<VocabularyDto>>> GetVocabularies(GetWordListParameter parameter);
+        Task<ServiceResponse<FirstPageVocabularyDto>> GetFirstPageVocabularies(GetWordListParameter parameter);
     }
 }

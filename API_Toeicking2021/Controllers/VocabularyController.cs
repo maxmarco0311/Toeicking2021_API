@@ -23,6 +23,16 @@ namespace API_Toeicking2021.Controllers
             _UserDBService = UserDBService;
         }
 
+        // 取得我的字彙列表(url：domain/Vocabulary/GetFirstPageVocabulary)
+        // POST時即便是複雜(自訂)型別，也可以不用加[FromBody]
+        [HttpPost("GetFirstPageVocabulary")]
+        public async Task<IActionResult> GetFirstPageVocabulary(GetWordListParameter parameter)
+        {
+            var response = await _vocabularyDBService.GetFirstPageVocabularies(parameter);
+            return Ok(response);
+        }
+
+
         // 取得我的字彙列表(url：domain/Vocabulary/GetVocabularies)
         // POST時即便是複雜(自訂)型別，也可以不用加[FromBody]
         [HttpPost("GetVocabularies")]

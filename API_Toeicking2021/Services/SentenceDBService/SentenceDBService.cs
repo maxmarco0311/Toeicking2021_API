@@ -119,7 +119,7 @@ namespace API_Toeicking2021.Services.SentenceDBService
             ServiceResponse<SentenceBundleDto> serviceResponse = new ServiceResponse<SentenceBundleDto>();
             try
             {
-                Sentence sentence = await _context.Sentences.FindAsync(parameter.SentenceId);
+                Sentence sentence = await _context.Sentences.FirstOrDefaultAsync(s=> s.SentenceId==Convert.ToInt16(parameter.SentenceId));
                 // 呼叫GenerateSentenceBundleBySentence，生出SentenceBundleDto物件
                 SentenceBundleDto bundle = await GenerateSentenceBundleBySentence(sentence);
                 serviceResponse.Data = bundle;
